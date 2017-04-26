@@ -1,4 +1,13 @@
-var categories = ['Bernie', 'Donald Trump', 'Barack Obama', 'John Stewart', 'Stephen Colbert'];
+var oldURL;
+var splitStillURL;
+var splitGifURL;
+var newURL;
+var searchTerm;
+var limit;
+var offset;
+var rating;
+
+var topics = ['Bernie', 'Donald Trump', 'Barack Obama', 'John Stewart', 'Stephen Colbert'];
 
 function displayInfo(searchTerm, limit, offset, rating) {
   $('#display').empty();
@@ -14,7 +23,6 @@ function displayInfo(searchTerm, limit, offset, rating) {
 
   var queryURL =  'http://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&' + str;
 
-  console.log(queryURL);
   $.ajax({
     url: queryURL,
     method: 'GET'
@@ -23,34 +31,24 @@ function displayInfo(searchTerm, limit, offset, rating) {
     var data = response.data;
 
     for (var i = 0; i < data.length; i++) {
-      var p = $('<p>');
-      p.text(data[i].rating);
-      $('#display').append(p);
 
       var img = $('<img>');
-      img.attr('src', data[i].images.fixed_height.url);
-
-      var a = $('<a target="_blank">');
-      a.attr('href', data[i].url);
-      a.html(img);
-      $('#display').append(a);
+      img.attr('src', data[i].images.fixed_height_still.url);
+      $('#display').append(img);
     }
-
-
-    // <a href="http://LandingPageURL.com" target="_blank"><img src="http://FileURL" /></a>
 
   });
 };
 
 function renderButtons() {
-  $('#categories-view').empty();
+  $('#topics-view').empty();
 
-  for (var i = 0; i < categories.length; i++) {
+  for (var i = 0; i < topics.length; i++) {
     var btn = $('<button>');
     btn.addClass('category btn btn-primary');
-    btn.attr('data-name', categories[i]);
-    btn.text(categories[i]);
-    $('#categories-view').append(btn);
+    btn.attr('data-name', topics[i]);
+    btn.text(topics[i]);
+    $('#topics-view').append(btn);
   }
 };
 
@@ -58,17 +56,31 @@ $('#add-category').click(function() {
   event.preventDefault();
 
   var input = $('#search-term').val().trim();
-  categories.push(input);
+  topics.push(input);
   renderButtons();
 });
 
 
 $(document).on('click', '.category', function() {
-  q = $(this).attr('data-name');
-  l = $('#limit').val().trim();
-  o = $('#offset').val().trim();
-  r = $('#rating').val().trim();
-  displayInfo(q, l, o, r);
-})
+  searchTerm = $(this).attr('data-name');
+  limit = $('#limit').val().trim();
+  offset = 0;
+  rating = $('#rating').val().trim();
+  displayInfo(searchTerm, limit, offset, rating);
+});
+
+$(document).on('click', 'img', function() {
+  oldURL = $(this).attr('src');
+  splitStillURL = oldURL.split('_');
+
+  if (splitStillURL.length > 1) {
+    newURL = splitStillURL[0] + '.gif';
+  } else {
+    splitGifURL = splitStillURL[0].split('.gif');
+
+    newURL = splitGifURL[0] + '_s.gif';
+  };
+  $(this).attr('src', newURL);
+});
 
 renderButtons();
