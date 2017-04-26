@@ -32,11 +32,23 @@ function displayInfo(searchTerm, limit, offset, rating) {
 
     for (var i = 0; i < data.length; i++) {
 
-      var img = $('<img>');
-      img.attr('src', data[i].images.fixed_height_still.url);
-      $('#display').append(img);
-    }
+      var cardDiv = $('<div>');
+      cardDiv.addClass('card');
 
+      var img = $('<img>');
+      img.addClass('card-img-top');
+      img.attr('src', data[i].images.fixed_height_still.url);
+
+      var blockDiv = $('<div>');
+      blockDiv.addClass('card-block');
+      blockDiv.append('<h4 class="card-title">Rating: ' + data[i].rating + '</h4>');
+      blockDiv.append('<a href=' + data[i].url + ' class=card-link target="_blank">Link</a><br><br>');
+
+      cardDiv.append(img);
+      cardDiv.append(blockDiv);
+      $('#display').append(cardDiv);
+
+    }
   });
 };
 
